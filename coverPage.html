@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Page</title>
+    <link rel="stylesheet" href="coverPage.css">
+</head>
+<body>
+    <!-- Curved "Sea of Glub" text -->
+  <svg width="500" height="350"
+    overflow="visible">
+    <defs>
+      <path id="curve" d="M 50,110 A 300,120 0 0,1 750,200"  /> 
+      <!-- an arc path -->
+    </defs>
+    <text>
+      <textPath href="#curve" startOffset="44%" text-anchor="middle" dominant-baseline="hanging">
+        The-Sea-of-Glub
+      </textPath>
+    </text>
+  </svg>
+    
+   <button class="play-btn">▶ Play</button>
+</body>
+</html>

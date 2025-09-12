@@ -1,0 +1,103 @@
+body {
+    margin:0;
+    padding:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ensures the body takes up the full viewport height */
+    background-image: url('Images/WideShipCabin.png');
+    background-size: cover;/* cover entire screen */
+    background-repeat: no-repeat;
+    background-attachment:fixed;/* fixed when scrolling */
+    background-position: center, center;
+}
+.main-container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    width: 90%; 
+}
+#grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns of equal width */
+    grid-template-rows: repeat(3, 1fr); /* 3 rows of equal height */
+    gap: 15px; 
+    width: 400px; 
+    height: auto;
+    margin-bottom: 70px;
+}
+.grid-item.correct {
+    background-color: rgb(161, 221, 161);
+    border-color: green;
+}
+
+/* Blank Space (Grid Item) */
+.grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+    font-size: large;
+    color: rgb(69, 69, 69);
+    width: 125px;
+    height: 125px;
+    background-color: rgba(161, 233, 249, 0.4);
+    border: 6px solid rgb(80, 62, 59);
+    border-radius: 9px;
+}
+.left-container, .right-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height:80vh;
+    width: 150px;
+    border: 2.5px solid rgb(127, 105, 91);
+}
+#draggableImage {
+  position: absolute;
+  width: 100px;
+  max-height: 100px;
+  cursor: grab;
+}
+.Home{
+     padding: 10px 20px;
+    bottom: 9px;
+    font-size: larger;
+    color:rgb(79, 33, 33);
+    font-weight: bold;
+    background-color: #31c34e;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background 0.3s;
+    border: none;
+}
+.Home:active{
+    background-color: #04f420;
+}
+.Again{
+     padding: 10px 20px;
+    bottom: 9px;
+    font-size: larger;
+    color:rgb(79, 33, 33);
+    font-weight: bold;
+    background-color: #31c34e;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: none;
+    margin-left: 70px;
+}
+.Again:active{
+    background-color: #04f420;
+}
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+.center-container {
+  display: flex;
+  flex-direction: column; /* stack grid + buttons vertically */
+  align-items: center;    /* center horizontally */
+}

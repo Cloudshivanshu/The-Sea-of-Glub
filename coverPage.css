@@ -1,49 +1,65 @@
 body {
-    background-image: url('Images/firstPage.png'); /* path to image */
-    background-size:cover;   /* cover entire screen */
-    background-repeat: no-repeat; /* don’t repeat */
-    /*background-attachment: fixed;/* fixed when scrolling */
-     /*aspect-ratio: 16 / 9;*/  
-     min-height: 200vh;
+  background-image: url('Images/firstPage.png');
+  /* path to image */
+  background-size: cover;
+  /* cover entire screen */
+  background-repeat: no-repeat;
+  /* don’t repeat */
+  /*background-attachment: fixed;/* fixed when scrolling */
+  /*aspect-ratio: 16 / 9;*/
+  min-height: 200vh;
 
-      display: flex;
-      justify-content: center; /* center horizontally */
-      align-items: center; /*vertically*/
+  display: flex;
+  justify-content: center;
+  /* center horizontally */
+  align-items: center;
+  /*vertically*/
 }
+
 .play-btn {
 
   transform: translateX(-40%);
-      background-color: #28a745;   /* green color */
-      color: white;               /* text color */
-      border: none;
-      padding: 12px 24px;
-      margin-left: 140px;
-      font-size: 36px;
-      font-weight: bold;
-      border-radius: 8px;         /* rounded corners */
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+  background-color: #28a745;
+  /* green color */
+  color: white;
+  /* text color */
+  border: none;
+  padding: 12px 24px;
+  margin-left: 140px;
+  font-size: 36px;
+  font-weight: bold;
+  border-radius: 8px;
+  /* rounded corners */
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
 .play-btn:hover {
-      background-color: #148b2d;  /* darker green on hover */
-    }
+  background-color: #148b2d;
+  /* darker green on hover */
+}
 
 .play-btn:active {
-  background-color: #59f002; /* even darker green when pressed */
+  background-color: #59f002;
+  /* even darker green when pressed */
 }
+
 svg {
-     width: 100%;   /* responsive */
+  width: 100%;
+  /* responsive */
   max-width: 800px;
   height: auto;
-      position:absolute;
-      bottom: 100px; /* place above button */
-      left: 50%;
-      transform: translateX(-50%);
-      
-    }
+  position: absolute;
+  bottom: 100px;
+  /* place above button */
+  left: 50%;
+  transform: translateX(-50%);
 
-    text {
-      font-size: 99px;
-      font-weight:bolder;
-      fill: navy; /* text color */
-    }
+}
+
+text {
+  font-size: 99px;
+  font-weight: bolder;
+  fill: navy;
+  /* text color */
+}

@@ -13,9 +13,14 @@ const imagesData = [
 const leftContainer = document.querySelector('.left-container');
 const rightContainer = document.querySelector('.right-container');
 const gridItems = document.querySelectorAll('.grid-item');
-
+const water = document.getElementById('water');
 let isDragging = false;
-let draggedImage = null; // To handle which image is being dragged
+let draggedImage = null;
+let originalParent = null;
+
+let waterHeight = 0;
+const riseStep = 200;
+const maxHeight = 1000;
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -24,15 +29,81 @@ function shuffle(array) {
     }
 }
 
+function checkWin() {
+    const allCorrect = [...gridItems].every(box => box.classList.contains("correct"));
+    if (allCorrect) {
+        const mainContainer = document.getElementById('grid-container');
+
+        mainContainer.classList.add('solved-state');
+        mainContainer.style.position = "relative"; // ✅ ensure text can center inside
+
+        gridItems.forEach(box => {
+            box.style.opacity = '0';
+        });
+
+        const againbtn = document.querySelector(".Again");
+        if (againbtn) {
+            againbtn.disabled = true;
+            againbtn.style.cursor = 'default';
+            againbtn.style.backgroundColor = 'grey';
+        }
+
+        // build the overlay text container
+        const completionText = document.createElement('div');
+        completionText.className = 'completion-text';
+        completionText.style.zIndex = "10";
+        completionText.style.opacity = '1';
+
+        const headline = document.createElement('div');
+        headline.className = 'headline';
+        headline.textContent = "Fantastic!";
+        completionText.appendChild(headline);
+
+        const line2 = document.createElement('div');
+        line2.className = 'subline';
+        line2.textContent = "You escaped The Sea of Glub 🌊";
+        completionText.appendChild(line2);
+
+        const line3 = document.createElement('div');
+        line3.className = 'subline';
+        line3.textContent = "But beware… there’s still The River Glub 🌊Give it a try";
+        completionText.appendChild(line3);
+
+        const line4 = document.createElement('div');
+        line4.className = 'subline';
+        line4.textContent = "And if you are done with seas or rivers wanna see a Imaginary SandCastel? Go Ahead";
+        completionText.appendChild(line4);
+
+        const linkRow = document.createElement('div');
+        linkRow.className = 'link-row';
+
+        const link1 = document.createElement('a');
+        link1.href = "https://summer.hackclub.com/s?scene=72";
+        link1.textContent = "The River Glub";
+        link1.className = "reward-link";
+
+        const link2 = document.createElement('a');
+        link2.href = "https://summer.hackclub.com/s?scene=53";
+        link2.textContent = "Imaginary Sandcastel";
+        link2.className = "reward-link";
+
+        linkRow.appendChild(link1);
+        linkRow.appendChild(link2);
+
+        completionText.appendChild(linkRow);
+
+        // Finally add to grid-container
+        mainContainer.appendChild(completionText);
+    }
+}
+
 function populateImages() {
     shuffle(imagesData);
-    const displayedImages = imagesData.slice(0, 10);
+    const displayedImages = imagesData.slice(0, 9);
 
-    // Clear existing images
     leftContainer.innerHTML = '';
     rightContainer.innerHTML = '';
 
-    // Add images to left and right containers
     displayedImages.forEach((image, index) => {
         const img = document.createElement('img');
         img.src = image.src;
@@ -46,29 +117,30 @@ function populateImages() {
         }
     });
 }
-
-// Initial population of images
 populateImages();
 
-// Add drag listeners to all dynamically created images
-document.querySelectorAll('.draggable-image').forEach(image => {
-    image.addEventListener('mousedown', function (event) {
+document.addEventListener('mousedown', function (event) {
+    if (event.target.classList.contains('draggable-image')) {
         isDragging = true;
-        draggedImage = this;
+        draggedImage = event.target;
+        originalParent = draggedImage.parentElement;
+        document.body.appendChild(draggedImage);
         draggedImage.style.position = 'absolute';
         draggedImage.style.cursor = 'grabbing';
-    });
+
+
+    }
 });
 
 document.addEventListener('mousemove', function (event) {
-    if (isDragging) {
-        draggedImage.style.left = event.pageX - (draggedImage.offsetWidth / 2) + 'px';
-        draggedImage.style.top = event.pageY - (draggedImage.offsetHeight / 2) + 'px';
+    if (isDragging && draggedImage) {
+        draggedImage.style.left = event.pageX - draggedImage.offsetWidth / 2 + 'px';
+        draggedImage.style.top = event.pageY - draggedImage.offsetHeight / 2 + 'px';
     }
 });
 
 document.addEventListener('mouseup', function () {
-    if (isDragging) {
+    if (isDragging && draggedImage) {
         isDragging = false;
         draggedImage.style.cursor = 'grab';
 
@@ -78,9 +150,8 @@ document.addEventListener('mouseup', function () {
         gridItems.forEach(box => {
             const boxRect = box.getBoundingClientRect();
 
-            // Check if the image's center is within the box
-            const imageCenterX = imageRect.left + (imageRect.width / 2);
-            const imageCenterY = imageRect.top + (imageRect.height / 2);
+            const imageCenterX = imageRect.left + imageRect.width / 2;
+            const imageCenterY = imageRect.top + imageRect.height / 2;
 
             if (
                 imageCenterX >= boxRect.left &&
@@ -88,46 +159,60 @@ document.addEventListener('mouseup', function () {
                 imageCenterY >= boxRect.top &&
                 imageCenterY <= boxRect.bottom
             ) {
-                // Get the names for matching
                 const imageName = draggedImage.dataset.name;
                 const boxName = box.dataset.name;
 
                 if (imageName === boxName) {
-                    // Correct match: lock the image in place
-                    draggedImage.style.left = boxRect.left + (boxRect.width - imageRect.width) / 2 + 'px';
-                    draggedImage.style.top = boxRect.top + (boxRect.height - imageRect.height) / 2 + 'px';
-                    draggedImage.style.cursor = 'default';
-                    draggedImage.draggable = false;
-                    box.classList.add('correct');
+                    box.innerHTML = '';
                     box.appendChild(draggedImage);
+                    draggedImage.style.position = 'relative';
+                    draggedImage.style.left = '0';
+                    draggedImage.style.top = '0';
+                    draggedImage.style.cursor = 'default';
+                    box.classList.add('correct');
                     droppedCorrectly = true;
-                } else {
-                    alert('Incorrect!');
+                    checkWin();
                 }
-
             }
-
         });
 
-        // If not dropped in any box or dropped incorrectly, return to original position
         if (!droppedCorrectly) {
-            // A simple reset by moving it off-screen
-            draggedImage.style.left = '-1000px';
-            draggedImage.style.top = '-1000px';
-        }
-    }
+            // ❌ Wrong → return to original container
+            originalParent.appendChild(draggedImage);
+            draggedImage.style.position = 'relative';
+            draggedImage.style.left = '0';
+            draggedImage.style.top = '0';
+            draggedImage.style.zIndex = 'auto';
 
+            flashScreen();
+            waterHeight += riseStep;
+            if (waterHeight > maxHeight) waterHeight = maxHeight;
+            water.style.height = waterHeight + 'px';
+            if (waterHeight === maxHeight) {
+                setTimeout(() => alert('💀 You drowned! Glub-Glub-Glub🫧'), 300);
+            }
+        }
+
+        draggedImage = null;
+    }
 });
 
 function shuffleDivs() {
     const container = document.getElementById("grid-container");
-    console.log(container);
     const divs = Array.from(container.children);
-    divs.sort(() => Math.random() - 0.5); // shuffle
-    divs.forEach(div => container.appendChild(div)); // re-add in new order
+    divs.sort(() => Math.random() - 0.5);
+    divs.forEach(div => container.appendChild(div));
 }
 
-// Restart the game when Again button is clicked
+function flashScreen() {
+    const overlay = document.createElement("div");
+    overlay.className = "flash-overlay";
+    document.body.appendChild(overlay);
+
+    // remove after animation ends
+    setTimeout(() => overlay.remove(), 900);
+}
+
 document.querySelector(".Again").addEventListener("click", () => {
     shuffleDivs();
     populateImages();
@@ -135,13 +220,6 @@ document.querySelector(".Again").addEventListener("click", () => {
         box.classList.remove("correct");
         box.innerHTML = box.dataset.name;
     });
-    // Re-add drag listeners to the new images
-    document.querySelectorAll('.draggable-image').forEach(image => {
-        image.addEventListener('mousedown', function (event) {
-            isDragging = true;
-            draggedImage = this;
-            draggedImage.style.position = 'absolute';
-            draggedImage.style.cursor = 'grabbing';
-        });
-    });
+    waterHeight = 0;
+    water.style.height = '0';
 });

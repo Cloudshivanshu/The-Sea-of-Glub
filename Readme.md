@@ -16,7 +16,7 @@ An interactive web-based puzzle game where players must solve a **grid challenge
   - Scroll background for completion state  
 
 ---
-
+## Play here https://cloudshivanshu.github.io/The-Sea-of-Glub/
 ---
 
 ## 🛠️ Tech Stack  

@@ -10,6 +10,13 @@
 </head>
 
 <body>
+  <audio id="bgm" autoplay loop>
+  <source src="SoundEffects/sunset.mp3" type="audio/mpeg">
+</audio>
+<script>
+  const bgm = document.getElementById("bgm");
+  bgm.volume = 1.0; // full volume
+</script>
   <svg width="500" height="350" overflow="visible">
     <defs>
       <path id="curve" d="M 50,110 A 300,120 0 0,1 750,200" />

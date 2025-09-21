@@ -18,9 +18,52 @@ let isDragging = false;
 let draggedImage = null;
 let originalParent = null;
 
+//audios
+const flash = document.getElementById("flashFlood");
+const anounce = document.getElementById("anounce");
+const correctAudio = document.getElementById("correctSound");
+const wrongAudio = document.getElementById("wrongSound");
+const levelup = document.getElementById("levelup");
+const shipHorn = document.getElementById("ship-horn");
+const shipBell = document.getElementById("ship-bell");
+const drowned = document.getElementById("drowned");
+
+flash.volume = 0.3;
+anounce.volume = 0.5;
+
 let waterHeight = 0;
 const riseStep = 200;
 const maxHeight = 1000;
+
+
+playRandomly1();
+playRandomly2();
+
+function playRandomly2() {
+    // pick a random delay between 5s (5000ms) and 30s (30000ms)
+    const delay = Math.floor(Math.random() * (30000 - 5000 + 1)) + 5000;
+
+    setTimeout(() => {
+        shipBell.currentTime = 0;
+        shipBell.volume = 1.0;
+        shipBell.play();
+
+        // after it plays, schedule the next random one
+        playRandomly2();
+    }, delay);
+}
+
+function playRandomly1() {
+    const delay = Math.floor(Math.random() * (30000 - 5000 + 1)) + 5000;
+
+    setTimeout(() => {
+        shipHorn.currentTime = 0;
+        shipHorn.volume = 1.0;
+        shipHorn.play();
+
+        playRandomly1();
+    }, delay);
+}
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -34,8 +77,12 @@ function checkWin() {
     if (allCorrect) {
         const mainContainer = document.getElementById('grid-container');
 
+        levelup.currentTime = 0;//reset to zero
+        levelup.volume = 1.0;
+        levelup.play();
+
         mainContainer.classList.add('solved-state');
-        mainContainer.style.position = "relative"; // ✅ ensure text can center inside
+        mainContainer.style.position = "relative"; // ensure text can center inside
 
         gridItems.forEach(box => {
             box.style.opacity = '0';
@@ -119,23 +166,35 @@ function populateImages() {
 }
 populateImages();
 
+let offsetX = 0;
+let offsetY = 0;
+
 document.addEventListener('mousedown', function (event) {
     if (event.target.classList.contains('draggable-image')) {
         isDragging = true;
         draggedImage = event.target;
         originalParent = draggedImage.parentElement;
+
+        const rect = draggedImage.getBoundingClientRect();
+        offsetX = event.clientX - rect.left;
+        offsetY = event.clientY - rect.top;
+
         document.body.appendChild(draggedImage);
         draggedImage.style.position = 'absolute';
         draggedImage.style.cursor = 'grabbing';
+        draggedImage.style.zIndex = '9999';
 
-
+        // place correctly under cursor
+        draggedImage.style.left = event.pageX - offsetX + 'px';
+        draggedImage.style.top = event.pageY - offsetY + 'px';
+        event.preventDefault();
     }
 });
 
 document.addEventListener('mousemove', function (event) {
     if (isDragging && draggedImage) {
-        draggedImage.style.left = event.pageX - draggedImage.offsetWidth / 2 + 'px';
-        draggedImage.style.top = event.pageY - draggedImage.offsetHeight / 2 + 'px';
+        draggedImage.style.left = (event.pageX - offsetX) + 'px';
+        draggedImage.style.top = (event.pageY - offsetY) + 'px';
     }
 });
 
@@ -163,6 +222,10 @@ document.addEventListener('mouseup', function () {
                 const boxName = box.dataset.name;
 
                 if (imageName === boxName) {
+
+                    correctAudio.currentTime = 0;
+                    correctAudio.play();
+
                     box.innerHTML = '';
                     box.appendChild(draggedImage);
                     draggedImage.style.position = 'relative';
@@ -184,11 +247,18 @@ document.addEventListener('mouseup', function () {
             draggedImage.style.top = '0';
             draggedImage.style.zIndex = 'auto';
 
+            wrongAudio.currentTime = 0;
+            wrongAudio.play();
+
             flashScreen();
             waterHeight += riseStep;
             if (waterHeight > maxHeight) waterHeight = maxHeight;
             water.style.height = waterHeight + 'px';
             if (waterHeight === maxHeight) {
+                drowned.currentTime = 0;
+                drowned.volume = 1.0;
+                drowned.play();
+
                 setTimeout(() => alert('💀 You drowned! Glub-Glub-Glub🫧'), 300);
             }
         }
@@ -216,6 +286,8 @@ function flashScreen() {
 document.querySelector(".Again").addEventListener("click", () => {
     shuffleDivs();
     populateImages();
+    drowned.pause();
+    drowned.currentTime = 0;
     gridItems.forEach(box => {
         box.classList.remove("correct");
         box.innerHTML = box.dataset.name;
